@@ -455,14 +455,15 @@ reference to the last commit and almost always points to a Branch
 <img src="imgs/git_tree.png" alt="">
 <ul>
 <li class="fragment fade-in">I cannot delete a commit that is referenced by another commit
-<li class="fragment fade-in">I can delete the last n commits – that is reset
-<li class="fragment fade-in">Or I can undo the changes of a single commit by creating a new commit -
-that is revert
+<li class="fragment fade-in">I can delete the last n commits – that is <b>reset</b>
+<li class="fragment fade-in">Or I can undo the changes of a single commit <br>by creating a new commit that has the inverse changes -
+that is <b>revert</b>
 </ul>
 </section>
 
 <section>
 <h2>git reset</h2>
+git reset 0198af3<br>
 <img src="imgs/git_reset.gif" alt="">
 </section>
 
@@ -537,6 +538,18 @@ git revert c34d...<br>
 <li>You have to fix each conflict and then manually add each file to staging area and commit
 <li>If you don’t know how to do it, git merge --abort
 </ul>
+</section>
+
+<section>
+    <h2>Git rebase</h2>
+    <ul>
+    <li>Reapply all the commits from your branch to the tip of another branch.
+    <li>Useful if you want to maintain a linear tree
+    <li>By reapplying commits git creates new ones.
+    <li>It changes history
+    <li>Never do it on a shared branch
+    </ul>
+    <img src="imgs/git_rebase.png" alt="">
 </section>
 
 <section>
