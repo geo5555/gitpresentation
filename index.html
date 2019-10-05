@@ -79,7 +79,7 @@ document.getElementsByTagName('head')[0].appendChild(link);
 <li>it is file based, does not require a database
 <li>uses branches to isolate changes
 <li>uses merges to icorporate your changes
-<li>every user who works on a project has locally a complete copy of the project
+<li>every user has locally a complete copy of the project
 <li>git usually refers to the command line tools
 </ul>
 </section>
@@ -240,10 +240,12 @@ I do some changes and do a second commit
 <pre><code>
 tree cafa329b00ef375da85369e031d9417a6bb75f30
 parent 11299e93bdb3dfa7d792bc998fcb208fb7be40d3
-author geo5555 <geo5555@users.noreply.github.com> 1569745476 +0300
-committer geo5555 <geo5555@users.noreply.github.com> 1569745476 +0300
+author geo5555 &ltgeo5555@users.noreply.github.com> 1569745476 +0300
+committer geo5555 &ltgeo5555@users.noreply.github.com> 1569745476 +0300
+
 second commit
 </code></pre>
+
 <pre><code>
 $ git cat-file -p cafa329b
 100644 blob d00491fd7e5bb6fa28c517a0bb32b8b506539d4d    	1.txt
@@ -331,13 +333,14 @@ I delete a file
 $ git cat-file -p 3643b67540a48cfcf40e75
 tree 1d9ccfd19cea39f3b059627c43fea6e6a29d3a6c
 parent f12748e58780e2297d4881273c93bc3f5f5b40e0
-author geo5555 <geo5555@users.noreply.github.com> 1569756216 +0300
-committer geo5555 <geo5555@users.noreply.github.com> 1569756216 +0300
+author geo5555 &ltgeo5555@users.noreply.github.com> 1569756216 +0300
+committer geo5555 &ltgeo5555@users.noreply.github.com> 1569756216 +0300
+
 deleted file 1.txt
 </code></pre>
 
 <pre><code>
-$  git cat-file -p 1d9ccfd19cea39
+$ git cat-file -p 1d9ccfd19cea39
 100644 blob 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f    2.txt
 100644 blob e9a3b44ce3a8d38cf54ac6698ff1d457b3d103f6    3.txt
 100644 blob b8626c4cff2849624fb67f87cd0ad72b163671ad    4.txt
@@ -535,7 +538,8 @@ git revert c34d...<br>
 <li>Files that have no conflict will be in the staging area
 <li>Files that have conflict will be in the working directory
 <li>The merge will not be done unless you fix the conflicts
-<li>You have to fix each conflict and then manually add each file to staging area and commit
+<li>You have to fix each conflict and then <br>
+    add each file to staging area and commit
 <li>If you don’t know how to do it, git merge --abort
 </ul>
 </section>
@@ -550,6 +554,15 @@ git revert c34d...<br>
     <li>Never do it on a shared branch
     </ul>
     <img src="imgs/git_rebase.png" alt="">
+</section>
+
+<section>
+    <h2>Git rebase</h2>
+    <ul>
+    <li>After rebase you will do a merge
+    <li>and it will be a fast forward merge by default</li>
+    </ul>
+    <img src="imgs/git_rebase.gif" alt="">
 </section>
 
 <section>
