@@ -1,0 +1,700 @@
+<!doctype html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>reveal.js</title>
+
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/theme/white.css">
+<link rel="stylesheet" href="css/custom.css">
+<!-- Theme used for syntax highlighting of code -->
+<link rel="stylesheet" href="lib/css/monokai.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement('link');
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName('head')[0].appendChild(link);
+</script>
+
+</head>
+<body>
+<div class="reveal">
+<div id="hidden" style="display:none;">
+<div class="header-left">test header left</div>
+<div class="header-right">test header right</div>
+<div class="footer-left">test footer left</div>
+<div class="footer-right">test footer right</div>
+</div>
+
+<div class="slides">
+
+<section data-background-image="imgs/GIT.png" data-background-opacity=0.3>
+<h1>Git from the inside out</h1>
+<small>by George Eleftheriou</small>
+</section>
+
+<section>
+<h2>Agenda</h2>
+<ul>
+<li>What is Git
+<li>Git init/add/commit
+<li>Git internals
+<li>Git Branches
+<li>Git Merges
+<li>Undo changes – Revert vs Reset
+<li>Git Remotes
+<li>What is Github
+<li>How to collaborate or contribute on Github
+<li>Standalone and Collaboration WorkFlows
+</ul>
+</section>
+
+<section>
+<h2>What is Git?</h2>
+<p class="fragment">unpleasant person in British English slang </p>
+<img class="fragment" src="imgs/linus.png" alt="">
+<p class="fragment">"I'm an egotistical bastard, and I name all my projects after myself."</p>
+<p class="fragment">First 'Linux', now 'git'</p>
+</section>
+
+<section>
+    <h2>Why Git?</h2>
+    <img class="fragment" src="imgs/stats.png" alt="">
+</section>
+
+<section>
+<h2>What is git?</h2>
+<ul>
+<li>fast, lightweight, distributed version control system
+<li>keeps a history of all your changes
+<li>every change or set of changes is stored in a commit object
+<li>all commits are local, but they can also be pushed on a server
+<li>it is file based, does not require a database
+<li>uses branches to isolate changes
+<li>uses merges to icorporate your changes
+<li>every user who works on a project has locally a complete copy of the project
+<li>git usually refers to the command line tools
+</ul>
+</section>
+
+<section>
+<h2>Git disadvantages</h2>
+<h6>steep learning curve</h6>
+<img class="stretch" src="imgs/git-release-model.png" alt="">
+</section>
+
+<section>
+<h2>Git Init</h2>
+<ul>
+<li>Initializes a local repository</li>
+<li>Starts tracking files</li>
+<li>creates a .git folder which represents your local repository
+</ul>
+<pre><code>
+$ git init myproject
+Initialized empty Git repository in C:/projects/myproject/.git/
+
+or for existing directory called myproject
+
+$ cd myproject
+$ git init
+Initialized empty Git repository in C:/projects/myproject/.git/
+
+</code></pre>
+</section>
+
+<section>
+<h2>Git add and commit</h2>
+<ul>
+<li>It has a two step commit system
+<ul>
+<li>First you add your files to an area called index, stage, or cache</li>
+<li>Then you create a commit</li>
+</ul>
+</li>
+</ul>
+<img src="imgs/git-staging-area.svg" alt="">
+</section>
+
+<section>
+<h2>Git add and commit</h2>
+<pre><code>
+$ echo "1">1.txt
+$ echo "2">2.txt
+$ echo "3">3.txt
+
+$ git add .
+$ git commit -m "first commit"
+</code></pre>
+</section>
+        
+<section>
+    My first commit created these objects in .git\objects
+        <pre class="stretch"><code>
+        .GIT\OBJECTS
+        ├───00
+        │       750edc07d6415dcc07ae0351e9397b0222b7ba
+        │
+        ├───0c
+        │       fbf08886fca9a91cb753ec8734c84fcbe52c9f
+        │
+        ├───11
+        │       299e93bdb3dfa7d792bc998fcb208fb7be40d3
+        ├───7e
+        │       ab585dfd08ca9f7524e71369236c074c9e4d93
+        │
+        ├───d0
+        │       0491fd7e5bb6fa28c517a0bb32b8b506539d4d
+        │
+        ├───info
+        └───pack
+        </code></pre>
+</section>
+
+<section>
+<h2>Lets examine these objects</h2>
+<pre class="stretch"><code data-trim>
+$ git cat-file -t 11299e93
+commit
+$ git cat-file -p 11299e93
+tree 7eab585dfd08ca9f7524e71369236c074c9e4d93
+author geo5555 <geo5555@users.noreply.github.com> 1569745416 +0300
+committer geo5555 <geo5555@users.noreply.github.com> 1569745416 +0300
+first commit
+
+$ git cat-file -t 7eab585df
+tree
+$ git cat-file -p 7eab585df
+100644 blob d00491fd7e5bb6fa28c517a0bb32b8b506539d4d    	1.txt
+100644 blob 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f    	2.txt
+100644 blob 00750edc07d6415dcc07ae0351e9397b0222b7ba    	3.txt
+
+$ git cat-file -t d00491fd7
+blob
+$ git cat-file -p d00491fd7
+1
+
+$ git cat-file -t 0cfbf0888
+blob
+$ git cat-file -p 0cfbf0888
+2
+
+$ git cat-file -t 00750edc
+blob
+$ git cat-file -p 00750edc
+3
+
+</code></pre>
+<span class="fragment current-only" data-code-focus="4-7"></span>
+<span class="fragment current-only" data-code-focus="12-14"></span>
+<span class="fragment current-only" data-code-focus="18-19,23-24,28-29"></span>
+</section>
+
+<section>
+    <h2>Files in .git/objects</h2>
+        <div style="display: flex;flex-direction: column;
+        align-items: flex-start;">
+        <div>
+        <img src="imgs/white_file.gif" style="vertical-align:middle" alt="11299e93bdb3dfa7d792bc998fcb208fb7be40d3">
+        11299e93bdb3dfa7d792bc998fcb208fb7be40d => commit
+        </div>
+        <div>
+        <img src="imgs/white_file.gif" style="vertical-align:middle" alt="7eab585dfd08ca9f7524e71369236c074c9e4d93">
+        7eab585dfd08ca9f7524e71369236c074c9e4d93 => tree
+        </div>
+        <div>
+        <img src="imgs/white_file.gif" style="vertical-align:middle" alt="d00491fd7e5bb6fa28c517a0bb32b8b506539d4d">
+        d00491fd... => blob
+        <img src="imgs/white_file.gif" style="vertical-align:middle" alt="0cfbf08886fca9a91cb753ec8734c84fcbe52c9f">
+        0cfbf08... => blob
+        <img src="imgs/white_file.gif"style="vertical-align:middle"  alt="00750edc07d6415dcc07ae0351e9397b0222b7ba">
+        00750edc... => blob
+        </div>
+        </div>
+</section>
+
+<section>
+<h5>What happens when you add and commit</h5>
+<ul>
+<li>For each file in the index area, it creates a file object. The filename is a 40 hex hash of the
+file
+<li>For each directory, it creates a tree object, which contains the hashes of the files in it, and
+creates a 40hex hash of this object which is also the filename
+<li>It creates a commit object, that has the hash of the tree, the hash of the parent, author, email
+and commit message.
+</ul>
+<img src="imgs/commit.png" alt="">
+</section>
+
+
+<section>
+<h2>Second commit</h2>
+I do some changes and do a second commit
+<pre><code>
+tree cafa329b00ef375da85369e031d9417a6bb75f30
+parent 11299e93bdb3dfa7d792bc998fcb208fb7be40d3
+author geo5555 <geo5555@users.noreply.github.com> 1569745476 +0300
+committer geo5555 <geo5555@users.noreply.github.com> 1569745476 +0300
+second commit
+</code></pre>
+<pre><code>
+$ git cat-file -p cafa329b
+100644 blob d00491fd7e5bb6fa28c517a0bb32b8b506539d4d    	1.txt
+100644 blob 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f    	2.txt
+100644 blob e9a3b44ce3a8d38cf54ac6698ff1d457b3d103f6    	3.txt
+100644 blob b8626c4cff2849624fb67f87cd0ad72b163671ad    	4.txt
+</code></pre>
+</section>
+
+<section>
+<h2>Find the differences</h2>
+<pre><code data-trim>
+$ git cat-file -p 7eab585df
+100644 blob d00491fd7e5bb6fa28c517a0bb32b8b506539d4d    	1.txt
+100644 blob 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f    	2.txt
+100644 blob 00750edc07d6415dcc07ae0351e9397b0222b7ba    	3.txt
+
+$ git cat-file -p cafa329b
+100644 blob d00491fd7e5bb6fa28c517a0bb32b8b506539d4d    	1.txt
+100644 blob 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f    	2.txt
+100644 blob e9a3b44ce3a8d38cf54ac6698ff1d457b3d103f6    	3.txt
+100644 blob b8626c4cff2849624fb67f87cd0ad72b163671ad    	4.txt
+</code></pre>
+<p class="fragment fade-in">How many files changed?</p>
+<span class="fragment current-only" data-code-focus="2,7"></span>
+<span class="fragment current-only" data-code-focus="3,8"></span>
+<span class="fragment current-only" data-code-focus="4,9"></span>
+<p class="fragment fade-in">How many blob files exist?</p>
+<p class="fragment fade-in">How many files exist in git repository?</p>
+</section>
+
+<section>
+<pre class="stretch"><code>
+tree .git/objects
+.git/objects
+├── 00
+│   └── 750edc07d6415dcc07ae0351e9397b0222b7ba
+├── 0c
+│   └── fbf08886fca9a91cb753ec8734c84fcbe52c9f
+├── 11
+│   └── 299e93bdb3dfa7d792bc998fcb208fb7be40d3
+├── 7e
+│   └── ab585dfd08ca9f7524e71369236c074c9e4d93
+├── b8
+│   └── 626c4cff2849624fb67f87cd0ad72b163671ad
+├── ca
+│   └── fa329b00ef375da85369e031d9417a6bb75f30
+├── d0
+│   └── 0491fd7e5bb6fa28c517a0bb32b8b506539d4d
+├── e9
+│   └── a3b44ce3a8d38cf54ac6698ff1d457b3d103f6
+├── f1
+│   └── 2748e58780e2297d4881273c93bc3f5f5b40e0
+├── info
+└── pack
+11 directories, 9 files
+</code></pre>
+</section>
+
+<section>
+<h2>git diff</h2>
+<pre class="stretch"><code>
+$ git diff 11299e9 f12748e
+diff --git a/3.txt b/3.txt
+index 00750ed..e9a3b44 100644
+--- a/3.txt
++++ b/3.txt
+@@ -1 +1,2 @@
+3
++3a
+diff --git a/4.txt b/4.txt
+new file mode 100644
+index 0000000..b8626c4
+--- /dev/null
++++ b/4.txt
+@@ -0,0 +1 @@
++4
+</code></pre>
+</section>
+
+<section>
+<h2>Third commit</h2>
+I delete a file
+<pre><code>
+$ git cat-file -p 3643b67540a48cfcf40e75
+tree 1d9ccfd19cea39f3b059627c43fea6e6a29d3a6c
+parent f12748e58780e2297d4881273c93bc3f5f5b40e0
+author geo5555 <geo5555@users.noreply.github.com> 1569756216 +0300
+committer geo5555 <geo5555@users.noreply.github.com> 1569756216 +0300
+deleted file 1.txt
+</code></pre>
+
+<pre><code>
+$  git cat-file -p 1d9ccfd19cea39
+100644 blob 0cfbf08886fca9a91cb753ec8734c84fcbe52c9f    2.txt
+100644 blob e9a3b44ce3a8d38cf54ac6698ff1d457b3d103f6    3.txt
+100644 blob b8626c4cff2849624fb67f87cd0ad72b163671ad    4.txt
+</code></pre>
+<p class="fragment fade-in">How many blob files exist?</p>
+<p class="fragment fade-in">How many files exist in git repository?</p>
+</section>
+
+<section style="max-height:100%">
+<pre class="stretch"><code>
+tree .git/objects
+.git/objects
+├── 00
+│   └── 750edc07d6415dcc07ae0351e9397b0222b7ba
+├── 0c
+│   └── fbf08886fca9a91cb753ec8734c84fcbe52c9f
+├── 11
+│   └── 299e93bdb3dfa7d792bc998fcb208fb7be40d3
+├── 1d
+│   └── 9ccfd19cea39f3b059627c43fea6e6a29d3a6c
+├── 36
+│   └── 43b67540a48cfcf40e7526968c4bf4dff1f93c
+├── 7e
+│   └── ab585dfd08ca9f7524e71369236c074c9e4d93
+├── b8
+│   └── 626c4cff2849624fb67f87cd0ad72b163671ad
+├── ca
+│   └── fa329b00ef375da85369e031d9417a6bb75f30
+├── d0
+│   └── 0491fd7e5bb6fa28c517a0bb32b8b506539d4d
+├── e9
+│   └── a3b44ce3a8d38cf54ac6698ff1d457b3d103f6
+├── f1
+│   └── 2748e58780e2297d4881273c93bc3f5f5b40e0
+├── info
+└── pack
+
+13 directories, 11 files
+</code></pre>
+</section>
+<section>
+<h2>Git log</h2>
+<pre class="stretch"><code>
+$ git log
+commit 3643b67540a48cfcf40e7526968c4bf4dff1f93c (HEAD -> master)
+Author: geo5555 <geo5555@users.noreply.github.com>
+Date:   Sun Sep 29 14:23:36 2019 +0300
+
+deleted file 1.txt
+
+commit f12748e58780e2297d4881273c93bc3f5f5b40e0
+Author: geo5555 <geo5555@users.noreply.github.com>
+Date:   Sun Sep 29 11:24:36 2019 +0300
+
+second commit
+
+commit 11299e93bdb3dfa7d792bc998fcb208fb7be40d3
+Author: geo5555 <geo5555@users.noreply.github.com>
+Date:   Sun Sep 29 11:23:36 2019 +0300
+
+first commit
+</code></pre>
+</section>
+
+<section>
+    <h2>What is DAG?</h2>
+    <ul>
+        <li>Directed Acyclic Graph</li>
+        <li>Directed because every commit has a pointer to the parent commit</li>
+        <li>Acyclic because if I follow the pointer I never get back to the same node</li>
+
+    </ul>
+    <div>
+    <img src="imgs/git_tree.png" alt="">
+    </div>
+</section>
+
+<section>
+<h2>Head and Master</h2>
+<ul>
+<li style="margin: 0 0 10px 0px">Master is the main default local branch when the project is first
+created
+<li style="margin: 0 0 10px 0px">A branch is just a pointer to a commit
+<li style="margin: 0 0 10px 0px">.git/refs/heads/master -> 3643b67540a48cfcf40e7526968c4bf4dff1f93c
+<li style="margin: 0 0 10px 0px">.git/HEAD -> ref: refs/heads/master
+<li style="margin: 0 0 10px 0px">HEAD shows where you are in the tree. It is just a symbolic
+reference to the last commit and almost always points to a Branch
+</ul>
+<img src="imgs/git-head-master.gif" alt="" class="fragment fade-in">
+</section>
+
+<section>
+<h2>Head cont'd</h2>
+<ul>
+<li style="margin: 0 0 10px 0px">HEAD^ or HEAD~ is the parent commit of the HEAD
+<li style="margin: 0 0 10px 0px">HEAD^^ or HEAD~~ is the grandparent
+<li style="margin: 0 0 10px 0px">HEAD~5 is the fifth commit back in the tree
+</ul>
+</section>
+
+<section>
+<h2>git diff</h2>
+<ul>
+<li>git diff: View difference between Stage and Working Directory
+<li>git diff --staged: View difference between HEAD and Stage
+<li>git diff HEAD: View difference between HEAD and Working Directory
+<li>Git diff <commit1>
+<commit2>
+<li>Git difftool
+</ul>
+</section>
+
+<section>
+<h2>Undo changes</h2>
+<img src="imgs/git_tree.png" alt="">
+<ul>
+<li class="fragment fade-in">I cannot delete a commit that is referenced by another commit
+<li class="fragment fade-in">I can delete the last n commits – that is reset
+<li class="fragment fade-in">Or I can undo the changes of a single commit by creating a new commit -
+that is revert
+</ul>
+</section>
+
+<section>
+<h2>git reset</h2>
+<img src="imgs/git_reset.gif" alt="">
+</section>
+
+<section>
+<h2>git reset hard vs soft</h2>
+<ul>
+<li>Git reset HEAD~3 will delete the last 3 commits
+<li>git reset --soft uncommits but leaves them in stage - you can commit them again
+<li>git reset --mix unstages the files (leaves them in the working directory) - you must add and
+commit
+<li>git reset (same as --mix) is the default
+<li>git reset --hard uncommits and unstages (deletes files)
+</ul>
+</section>
+
+<section>
+<h2>git revert</h2>
+undo the changes of one commit by creating another commit:
+git revert c34d...<br>
+<img src="imgs/git_revert.gif" alt="">
+</section>
+
+
+<section>
+<h2>Branch</h2>
+<ul>
+<li>It is just a pointer to a commit
+<li>It is a file with 40 characters, very lightweight
+<li>Does not create a copy of your files
+<li>Changes made to one branch do not affect other branches
+<li>Usually, when I want to create a change, I make a branch
+</ul>
+</section>
+
+<section>
+<h2>Branches and Merges</h2>
+<ul>
+    <li>git checkout -b ft1</li>
+    <li>git checkout -b ft2, commit, commit, commit, commit</li>
+    <li>git checkout ft1, commit, commit, commit, commit</li>
+    <li>git checkout master, commit, commit, commit, commit</li>
+    <li>git merge ft2</li>
+    <li>git merge ft1</li>
+</ul>
+<br>
+<img src="imgs/git_branches.gif" alt="">
+</section>
+
+<section>
+<h2>3 way Merge</h2>
+<ul>
+<li>When I want to include the changes from one branch to another I have to merge
+<li>Git finds the common ancestor of the two trees
+<li>Incorporates the changes of the two last commits in each tree and creates a new commit
+</ul>
+<img src="imgs/git_branching_and_merging.gif" alt="">
+</section>
+
+<section>
+<h2>FF Merge</h2>
+<img src="imgs/ff_merging.gif" alt="">
+</section>
+
+<section>
+<h2>Merge Conflicts</h2>
+<ul>
+<li>When two branches have changed the same file
+<li>Git will stop the merge and ask you to fix the conflict
+<li>Files that have no conflict will be in the staging area
+<li>Files that have conflict will be in the working directory
+<li>The merge will not be done unless you fix the conflicts
+<li>You have to fix each conflict and then manually add each file to staging area and commit
+<li>If you don’t know how to do it, git merge --abort
+</ul>
+</section>
+
+<section>
+<h2>Remote Repos</h2>
+<ul>
+<li>A remote repo is a repo stored on a server
+<li>The goal is maintain keep the local and remote repo in sync
+<li>For git the remote repo is just like another branch
+<li>You can push changes to the remote repo
+<li>You can fetch changes from the remote repo and merge them (pull)
+</ul>
+<br>
+<img src="imgs/git_push.png" alt="">
+</section>
+
+<section>
+<h2>Push changes to Remote Repo</h2>
+git commit, git commit, git push <br>
+<img src="imgs/git_push.gif" alt="">
+</section>
+
+<section>
+<h2>Git Remote add</h2>
+<ul>
+<li>Git remote add origin repo-url
+<li>Usually it is called <b>origin</b>
+<li>Another way to add a remote repo is to clone it
+<li>Git clone repo-url
+<li>This creates a new branch locally called origin/master
+</ul>
+</section>
+
+<section>
+<h2>Standalone workflow</h2>
+<ol>
+<li>create a folder for your project
+<li>run git init
+<li>start working on your files
+<li>do git add.
+<li>do git commit -m "changes
+<li>create new feature git checkout -b mybranch
+<li>do changes
+<li>git add .
+<li>git commit -m "changes"
+<li> git checkout master
+<li> git merge mybranch
+<li> create a git hub repo
+<li> add remote repo to local
+<li> git push -u origin master
+</ul>
+</section>
+
+<section>
+<h2>Collaboration Workflow</h2>
+<ol>
+<li>git clone a project
+<li>git checkout -b mybranch
+<li>do changes
+<li>git add .
+<li>git commit -m "changes"
+<li>git push origin mybranch
+<li>create pull request
+<li>let someone review and merge the code
+<li>git pull (or git fetch, git checkout master, git merge origin/master)
+</ol>
+</section>
+
+<section>
+<h2>Contributor Workflow</h2>
+<ol>
+<li>Fork a project
+<li>git clone a project
+<li>git checkout -b mybranch
+<li>do changes
+<li>git add .
+<li>git commit -m "changes"
+<li>git push origin mybranch
+<li>create pull request
+<li>let someone review and merge the code
+<li>git pull (or git fetch, git checkout master, git merge origin/master)
+</ol>
+</section>
+
+<section data-background-iframe="https://guides.github.com/introduction/flow/" data-background-interactive>
+	
+</section>
+
+<section>
+<h2>What is Github</h2>
+<ul>
+<li>a hosting repository platform
+<li>a colaboration platform
+<li>a project management platform
+<li>a web gui to git
+</ul>
+</section>
+
+<section>
+<h1>Thank you</h1>
+</section>
+</div>
+</div>
+
+<script src="js/reveal.js"></script>
+
+<script>
+// More info about config & dependencies:
+// - https://github.com/hakimel/reveal.js#configuration
+// - https://github.com/hakimel/reveal.js#dependencies
+Reveal.initialize({
+width: 1920,
+height: 1080,
+
+// Factor of the display size that should remain empty around the content
+margin: 0.1,
+
+// Bounds for smallest/largest possible scale to apply to content
+minScale: 0.2,
+maxScale: 1.5,
+//width: "100%",
+//height: "100%",
+//margin: 0,
+//minScale: 1,
+//maxScale: 1
+controls: false,
+progress: true,
+history: true,
+center: true,
+keyboard: true,
+transition: 'slide',
+
+// Enable the slide overview mode
+overview: true,
+
+// Vertical centering of slides
+center: true,
+//theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+//transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+slideNumber: 'c/t',
+
+dependencies: [
+{ src: 'plugin/markdown/marked.js' },
+{ src: 'plugin/markdown/markdown.js' },
+{ src: 'plugin/zoom-js/zoom.js' },
+{ src: 'plugin/notes/notes.js', async: true },
+{ src: 'plugin/highlight/highlight.js', async: true },
+{ src: 'plugin/jump/jump.js', async: true },
+{ src: 'highlight.pack.js' },
+{
+    src: 'reveal-code-focus/reveal-code-focus.js',
+    async: true,
+    callback: function() {
+    RevealCodeFocus();
+    }
+}
+]
+});
+</script>
+</body>
+
+</html>
